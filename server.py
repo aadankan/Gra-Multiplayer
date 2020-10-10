@@ -2,6 +2,8 @@ import socket
 import pickle
 import threading
 
+from game import Scene
+
 SERVER = socket.gethostbyname(socket.gethostname())
 PORT = 5050
 ADDR = (SERVER, PORT)

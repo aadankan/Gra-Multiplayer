@@ -1,19 +1,41 @@
-import socket
-import pickle
+import pygame
 
-PORT = 5050
-FORMAT = "UTF-8"
-DISCONNECT_MESSAGE = "!DISCONNECTED"
-SERVER = "217.144.222.58"
-ADDR = (SERVER, PORT)
+from network import Network
+
+pygame.init()
+
+width = 900
+height = 600
+win = pygame.display.set_mode((width, height))
+pygame.display.set_caption("War in space")
+background = pygame.image.load("background.png")
+
+def redrawWindow(win, players, enemies):
+    win.blit(background, (0, 0))
+    for player in players:
+        player.draw(win)
+
+    for enemy in enemies:
+        enemy.draw(win)
+
+def main():
+    run = True
+    n = Network()
+    connection = n.connection
+    clock = pygame.time.Clock()
+
+    player = connection[0]
+    while run:
+        enemies = connection[1]
+        clock.tick(60)
+        player2, enemies = n.send((player, enemies))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+
+        print(player2, enemies)
 
 
-c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-c.connect(ADDR)
 
-def msg_send(msg):
-    c.send(pickle.dumps(msg))
-
-while True:
-    msg = input("MSG: ")
-    msg_send(msg)
