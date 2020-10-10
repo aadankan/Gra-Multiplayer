@@ -10,13 +10,18 @@ win = pygame.display.set_mode((width, height))
 pygame.display.set_caption("War in space")
 background = pygame.image.load("background.png")
 
+
 def redrawWindow(win, players, enemies):
     win.blit(background, (0, 0))
+
     for player in players:
         player.draw(win)
 
     for enemy in enemies:
         enemy.draw(win)
+
+    pygame.display.update()
+
 
 def main():
     run = True
@@ -35,7 +40,9 @@ def main():
                 run = False
                 pygame.quit()
 
-        print(player2, enemies)
+        players = (player, player2)
+        player.move()
+        redrawWindow(win, players, enemies)
 
 
-
+main()

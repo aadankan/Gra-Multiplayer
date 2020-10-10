@@ -1,8 +1,10 @@
 import socket
 import pickle
 import threading
+import random
 
-from game import Scene
+from player import Player
+from enemy import Enemy
 
 SERVER = socket.gethostbyname(socket.gethostname())
 PORT = 5050
@@ -17,19 +19,49 @@ try:
 except socket.error as e:
     str(e)
 
-s.listen()
+s.listen(2)
 print("Waiting for connection, Server has already started")
+
+count_enemies = 5
+players = [Player(300, 480), Player(500, 480)]
+enemies = []
+for i in range(count_enemies):
+    enemies.append(Enemy(random.randint(0, 700), random.choice((0, 64, 128))))
+
+scene = (players, enemies)
 
 
 def thread_client(conn, player):
+    start_data = scene[0][player], scene[1]
+    conn.send(pickle.dumps(start_data))
     connected = True
     while connected:
-        data = pickle.loads(conn.recv(2048))
-        print(data)
+        try:
+            data = pickle.loads(conn.recv(2048))
+            players[player] = data[0]
+            enemies = data[1]
 
+            if not data:
+                print("Disconnected")
+                break
 
+            else:
+                if player == 1:
+                    reply = scene[0][0], enemies
+                else:
+                    reply = scene[0][1], enemies
+
+            conn.send(pickle.dumps(reply))
+
+        except:
+            break
+
+    print("Lost connection")
+    conn.close()
+
+currentPlayer = 0
 while True:
     conn, addr = s.accept()
-    thread = threading.Thread(target=thread_client, args=(conn, addr))
+    thread = threading.Thread(target=thread_client, args=(conn, currentPlayer))
     thread.start()
-
+    currentPlayer += 1
