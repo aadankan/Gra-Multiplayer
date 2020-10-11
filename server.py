@@ -26,24 +26,26 @@ count_enemies = 5
 players = [Player(300, 480), Player(500, 480)]
 enemies = []
 for i in range(count_enemies):
-    enemies.append(Enemy(random.randint(0, 700), random.choice((0, 64, 128))))
+    enemies.append(Enemy(random.randint(0, 700), random.choice((0, 64))))
 
 scene = (players, enemies)
 
+pause = False
 
 def thread_client(conn, player):
     start_data = scene[0][player], scene[1]
     conn.send(pickle.dumps(start_data))
     connected = True
     while connected:
+
         try:
             data = pickle.loads(conn.recv(2048))
-            players[player] = data[0]
-            enemies = data[1]
-            print(enemies)
+            if data[0] != "pause":
+                if not pause:
+                    players[player] = data[0]
 
-            for enemy in enemies:
-                enemy.move()
+                    for enemy in enemies:
+                        enemy.move()
 
             if not data:
                 print("Disconnected")

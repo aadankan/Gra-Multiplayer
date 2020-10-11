@@ -9,6 +9,7 @@ class Player:
         self.x = x
         self.y = y
         self.vel = 4
+        self.pause = False
 
     def draw(self, win):
         win.blit(playerImg, (self.x, self.y))
@@ -23,4 +24,7 @@ class Player:
         if keys[pygame.K_RIGHT]:
             if self.x < 836:
                 self.x += self.vel
+
+
+
 
