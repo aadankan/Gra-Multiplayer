@@ -40,6 +40,10 @@ def thread_client(conn, player):
             data = pickle.loads(conn.recv(2048))
             players[player] = data[0]
             enemies = data[1]
+            print(enemies)
+
+            for enemy in enemies:
+                enemy.move()
 
             if not data:
                 print("Disconnected")

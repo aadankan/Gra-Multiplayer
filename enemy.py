@@ -4,6 +4,7 @@ import pygame
 pygame.init()
 enemyImg = pygame.image.load('enemy.png')
 
+
 class Enemy:
     def __init__(self, x, y):
         self.x = x
@@ -17,7 +18,7 @@ class Enemy:
         self.x += self.vel
         if self.x <= 0:
             self.vel = 4
-            self.y += 40
+            self.y += 64
         elif self.x >= 836:
             self.vel = -4
-            self.y += 40
+            self.y += 64

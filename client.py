@@ -30,9 +30,10 @@ def main():
     clock = pygame.time.Clock()
 
     player = connection[0]
+    enemies = connection[1]
     while run:
-        enemies = connection[1]
         clock.tick(60)
+
         player2, enemies = n.send((player, enemies))
 
         for event in pygame.event.get():
@@ -43,6 +44,5 @@ def main():
         players = (player, player2)
         player.move()
         redrawWindow(win, players, enemies)
-
 
 main()
