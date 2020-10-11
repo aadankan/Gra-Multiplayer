@@ -4,6 +4,7 @@ import pygame
 pygame.init()
 playerImg = pygame.image.load('space.png')
 
+
 class Player:
     def __init__(self, x, y):
         self.x = x
@@ -24,6 +25,8 @@ class Player:
         if keys[pygame.K_RIGHT]:
             if self.x < 836:
                 self.x += self.vel
+
+
 
 
 
