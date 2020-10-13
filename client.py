@@ -1,8 +1,11 @@
 import pygame
+from pygame import font
 
 from network import Network
 
 pygame.init()
+pygame.font.init()
+myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
 width = 900
 height = 600
@@ -11,8 +14,9 @@ pygame.display.set_caption("War in space")
 background = pygame.image.load("background.png")
 
 
-def redrawWindow(win, players, enemies, bullets):
+def redrawWindow(win, players, enemies, bullets, textsurface):
     win.blit(background, (0, 0))
+    win.blit(textsurface, (0, 0))
 
     for player in players:
         player.draw(win)
@@ -37,10 +41,12 @@ def main():
     enemies = connection[1]
     bullets_list = connection[2]
     bullets_obj = connection[3]
+    points = connection[4]
 
     bullet_cooldown = 0
     while run:
-        player2, enemies, bullets_list, bullets_obj = n.send((player, enemies, bullets_list, bullets_obj))
+        textsurface = myfont.render("Points: " + str(points), False, (255, 255, 255))
+        player2, enemies, bullets_list, bullets_obj, points = n.send((player, enemies, bullets_list, bullets_obj, points))
         clock.tick(60)
         keys = pygame.key.get_pressed()
 
@@ -56,7 +62,8 @@ def main():
         players = (player, player2)
 
         player.move()
-        redrawWindow(win, players, enemies, bullets_obj)
+        redrawWindow(win, players, enemies, bullets_obj, textsurface)
+
 
         if bullet_cooldown > 0:
             bullet_cooldown -= 1
