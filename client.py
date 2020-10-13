@@ -1,8 +1,6 @@
 import pygame
-import keyboard
 
 from network import Network
-from bullet import Bullet
 
 pygame.init()
 
@@ -45,21 +43,24 @@ def main():
     bullet_cooldown = 0
     start_pause = 1
     while run:
+        print(pause)
         clock.tick(60)
-        if keyboard.get_hotkey_name() == "esc" and not pause and pause_cooldown == 0:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE] and not pause and pause_cooldown == 0:
             pause = True
             pause_cooldown = 10
 
-        elif keyboard.get_hotkey_name() == "esc" and pause and pause_cooldown == 0:
+        elif keys[pygame.K_ESCAPE] and pause and pause_cooldown == 0:
             pause = False
             pause_cooldown = 10
 
-        if keyboard.get_hotkey_name() == "space" and not bullet and bullet_cooldown == 0:
+        if keys[pygame.K_SPACE] and not bullet and bullet_cooldown == 0:
             bullets_list.append(player.x)
             bullet_cooldown = 50
 
-        if not pause:
-            player2, enemies, bullets_list, bullets_obj = n.send((player, enemies, bullets_list, bullets_obj))
+            print("pressed")
+
+        player2, enemies, bullets_list, bullets_obj, pause_1 = n.send((player, enemies, bullets_list, bullets_obj, pause))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

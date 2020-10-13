@@ -69,18 +69,19 @@ def thread_client(conn, player):
     while connected:
         try:
             data = pickle.loads(conn.recv(2048))
+            print(data)
             bullets_list = data[2]
             bullets_obj = data[3]
+            pause = data[4]
 
-            if data[0] != "pause":
-                if not pause:
-                    players[player] = data[0]
+            if not pause:
+                players[player] = data[0]
 
-                    for enemy in enemies:
-                        enemy.move()
+                for enemy in enemies:
+                    enemy.move()
 
-                    for bullet in bullets_obj:
-                        bullet.move()
+                for bullet in bullets_obj:
+                    bullet.move()
 
             if len(bullets_list) > 0:
                 for bullet in bullets_list:
@@ -93,9 +94,9 @@ def thread_client(conn, player):
 
             else:
                 if player == 1:
-                    reply = scene[0][0], enemies, bullets_list, bullets_obj
+                    reply = scene[0][0], enemies, bullets_list, bullets_obj, pause
                 else:
-                    reply = scene[0][1], enemies, bullets_list, bullets_obj
+                    reply = scene[0][1], enemies, bullets_list, bullets_obj, pause
 
             conn.send(pickle.dumps(reply))
 
