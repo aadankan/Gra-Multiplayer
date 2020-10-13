@@ -6,6 +6,8 @@ import math
 
 from player import Player
 from enemy import Enemy
+from bullet import Bullet
+
 
 SERVER = socket.gethostbyname(socket.gethostname())
 PORT = 5050
@@ -38,6 +40,8 @@ def isCollision(enemyX, enemyY, bulletX, bulletY):
         return False
 
 
+bullets_obj = []
+bullets_list = []
 # Count of enemies
 count_enemies = 7
 # List of players (2 players with stable start position)
@@ -49,14 +53,15 @@ for i in range(count_enemies):
     enemies_create()
 
 # Combine players and enemies to easier sending in the future
-scene = (players, enemies)
+scene = (players, enemies, bullets_list, bullets_obj)
 
 # Start value stan of the game (if doesn't exist black screen in client bcs data wasn't sent)
 pause = False
 
+
 def thread_client(conn, player):
     # Start data contains player and enemies
-    start_data = scene[0][player], scene[1]
+    start_data = scene[0][player], scene[1], scene[2], scene[3]
     # Sending start data
     conn.send(pickle.dumps(start_data))
     # Stable variable connected
@@ -64,8 +69,9 @@ def thread_client(conn, player):
     while connected:
         try:
             data = pickle.loads(conn.recv(2048))
-            bullets = data[2]
-            print(bullets)
+            bullets_list = data[2]
+            bullets_obj = data[3]
+
             if data[0] != "pause":
                 if not pause:
                     players[player] = data[0]
@@ -73,8 +79,13 @@ def thread_client(conn, player):
                     for enemy in enemies:
                         enemy.move()
 
-                    for bullet in bullets:
+                    for bullet in bullets_obj:
                         bullet.move()
+
+            if len(bullets_list) > 0:
+                for bullet in bullets_list:
+                    bullets_list.remove(bullet)
+                    bullets_obj.append(Bullet(bullet+15, 480-35))
 
             if not data:
                 print("Disconnected")
@@ -82,9 +93,9 @@ def thread_client(conn, player):
 
             else:
                 if player == 1:
-                    reply = scene[0][0], enemies, bullets
+                    reply = scene[0][0], enemies, bullets_list, bullets_obj
                 else:
-                    reply = scene[0][1], enemies, bullets
+                    reply = scene[0][1], enemies, bullets_list, bullets_obj
 
             conn.send(pickle.dumps(reply))
 

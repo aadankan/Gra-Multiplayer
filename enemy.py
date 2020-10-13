@@ -17,8 +17,8 @@ class Enemy:
     def move(self):
         self.x += self.vel
         if self.x <= 0:
-            self.vel = 4
+            self.vel = 2
             self.y += 32
         elif self.x >= 836:
-            self.vel = -4
+            self.vel = -2
             self.y += 30

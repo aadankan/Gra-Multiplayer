@@ -36,9 +36,10 @@ def main():
     clock = pygame.time.Clock()
 
     bullet = False
-    bullets = []
     player = connection[0]
     enemies = connection[1]
+    bullets_list = connection[2]
+    bullets_obj = connection[3]
 
     pause_cooldown = 0
     bullet_cooldown = 0
@@ -54,11 +55,11 @@ def main():
             pause_cooldown = 10
 
         if keyboard.get_hotkey_name() == "space" and not bullet and bullet_cooldown == 0:
-            bullets.append(Bullet(player.x+15, player.y-3))
+            bullets_list.append(player.x)
             bullet_cooldown = 50
 
         if not pause:
-            player2, enemies, bullets = n.send((player, enemies, bullets))
+            player2, enemies, bullets_list, bullets_obj = n.send((player, enemies, bullets_list, bullets_obj))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -70,7 +71,7 @@ def main():
         # Pause
         if not pause:
             player.move()
-        redrawWindow(win, players, enemies, bullets)
+        redrawWindow(win, players, enemies, bullets_obj)
 
         if pause_cooldown > 0:
             pause_cooldown -= 1
