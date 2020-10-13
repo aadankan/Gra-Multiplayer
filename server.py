@@ -34,7 +34,7 @@ def enemies_create():
 # Detect collision between bullet and enemy
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt(math.pow(enemyX - bulletX, 2) + (math.pow(enemyY - bulletY, 2)))
-    if distance < 27:
+    if distance < 40:
         return True
     else:
         return False
@@ -66,7 +66,20 @@ def thread_client(conn, player):
     # Stable variable connected
     connected = True
     while connected:
+        for bullet in bullets_obj:
+            if bullet.y < 0:
+                bullets_obj.remove(bullet)
+
+        for bullet in bullets_obj:
+            for enemy in enemies:
+                if isCollision(enemy.x, enemy.y, bullet.x, bullet.y):
+                    bullets_obj.remove(bullet)
+                    enemies.remove(enemy)
+
+        if len(enemies) < 7:
+            enemies_create()
         try:
+            print(bullets_obj)
             data = pickle.loads(conn.recv(2048))
             bullets_list = data[2]
 
