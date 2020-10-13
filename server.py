@@ -72,7 +72,7 @@ def thread_client(conn, player):
     while connected:
         sounds = ""
         for bullet in bullets_obj:
-            if bullet.y < 0:
+            if bullet.y < -60:
                 bullets_obj.remove(bullet)
 
         for bullet in bullets_obj:
