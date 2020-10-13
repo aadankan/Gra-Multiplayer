@@ -53,22 +53,24 @@ for i in range(count_enemies):
     enemies_create()
 
 points = 0
-
+sounds = ""
 # Combine players and enemies to easier sending in the future
-scene = (players, enemies, bullets_list, bullets_obj, points)
+scene = (players, enemies, bullets_list, bullets_obj, points, sounds)
 
 bullets_v = []
 
 
 def thread_client(conn, player):
+    global sounds
     global points
     # Start data contains player and enemies
-    start_data = scene[0][player], scene[1], scene[2], scene[3], scene[4]
+    start_data = scene[0][player], scene[1], scene[2], scene[3], scene[4], scene[5]
     # Sending start data
     conn.send(pickle.dumps(start_data))
     # Stable variable connected
     connected = True
     while connected:
+        sounds = ""
         for bullet in bullets_obj:
             if bullet.y < 0:
                 bullets_obj.remove(bullet)
@@ -76,6 +78,7 @@ def thread_client(conn, player):
         for bullet in bullets_obj:
             for enemy in enemies:
                 if isCollision(enemy.x, enemy.y, bullet.x, bullet.y):
+                    sounds = "explosion"
                     bullets_obj.remove(bullet)
                     enemies.remove(enemy)
                     points += 1
@@ -110,9 +113,9 @@ def thread_client(conn, player):
 
             else:
                 if player == 1:
-                    reply = scene[0][0], enemies, bullets_list, bullets_obj, points
+                    reply = scene[0][0], enemies, bullets_list, bullets_obj, points, sounds
                 else:
-                    reply = scene[0][1], enemies, bullets_list, bullets_obj, points
+                    reply = scene[0][1], enemies, bullets_list, bullets_obj, points, sounds
 
             conn.send(pickle.dumps(reply))
 
