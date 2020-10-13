@@ -27,7 +27,6 @@ def redrawWindow(win, players, enemies, bullets):
 
 
 def main():
-    pause = False
     run = True
     n = Network()
     connection = n.connection
@@ -39,28 +38,15 @@ def main():
     bullets_list = connection[2]
     bullets_obj = connection[3]
 
-    pause_cooldown = 0
     bullet_cooldown = 0
-    start_pause = 1
     while run:
-        print(pause)
+        player2, enemies, bullets_list, bullets_obj = n.send((player, enemies, bullets_list, bullets_obj))
         clock.tick(60)
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE] and not pause and pause_cooldown == 0:
-            pause = True
-            pause_cooldown = 10
-
-        elif keys[pygame.K_ESCAPE] and pause and pause_cooldown == 0:
-            pause = False
-            pause_cooldown = 10
 
         if keys[pygame.K_SPACE] and not bullet and bullet_cooldown == 0:
             bullets_list.append(player.x)
             bullet_cooldown = 50
-
-            print("pressed")
-
-        player2, enemies, bullets_list, bullets_obj, pause_1 = n.send((player, enemies, bullets_list, bullets_obj, pause))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,17 +55,8 @@ def main():
 
         players = (player, player2)
 
-        # Pause
-        if not pause:
-            player.move()
+        player.move()
         redrawWindow(win, players, enemies, bullets_obj)
-
-        if pause_cooldown > 0:
-            pause_cooldown -= 1
-
-        if start_pause == 1:
-            pause = True
-            start_pause = 0
 
         if bullet_cooldown > 0:
             bullet_cooldown -= 1

@@ -7,7 +7,7 @@ class Bullet:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.vel = 5
+        self.vel = 2
 
     def draw(self, win):
         win.blit(bulletImg, (self.x, self.y))

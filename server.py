@@ -55,8 +55,7 @@ for i in range(count_enemies):
 # Combine players and enemies to easier sending in the future
 scene = (players, enemies, bullets_list, bullets_obj)
 
-# Start value stan of the game (if doesn't exist black screen in client bcs data wasn't sent)
-pause = False
+bullets_v = []
 
 
 def thread_client(conn, player):
@@ -69,24 +68,25 @@ def thread_client(conn, player):
     while connected:
         try:
             data = pickle.loads(conn.recv(2048))
-            print(data)
             bullets_list = data[2]
-            bullets_obj = data[3]
-            pause = data[4]
 
-            if not pause:
-                players[player] = data[0]
+            for bullet in bullets_obj:
+                if bullet not in bullets_v:
+                    bullets_v.append(bullet)
+                    bullets_obj.append(bullet)
 
-                for enemy in enemies:
-                    enemy.move()
-
-                for bullet in bullets_obj:
-                    bullet.move()
+            players[player] = data[0]
 
             if len(bullets_list) > 0:
                 for bullet in bullets_list:
                     bullets_list.remove(bullet)
                     bullets_obj.append(Bullet(bullet+15, 480-35))
+
+            for enemy in enemies:
+                enemy.move()
+
+            for bullet in bullets_obj:
+                bullet.move()
 
             if not data:
                 print("Disconnected")
@@ -94,9 +94,9 @@ def thread_client(conn, player):
 
             else:
                 if player == 1:
-                    reply = scene[0][0], enemies, bullets_list, bullets_obj, pause
+                    reply = scene[0][0], enemies, bullets_list, bullets_obj
                 else:
-                    reply = scene[0][1], enemies, bullets_list, bullets_obj, pause
+                    reply = scene[0][1], enemies, bullets_list, bullets_obj
 
             conn.send(pickle.dumps(reply))
 
