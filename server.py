@@ -9,7 +9,7 @@ from enemy import Enemy
 from bullet import Bullet
 
 
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "192.168.2.120"
 PORT = 5050
 ADDR = (SERVER, PORT)
 FORMAT = "UTF-8"
@@ -22,9 +22,9 @@ try:
 except socket.error as e:
     str(e)
 
+print("Listening on: " + SERVER)
 s.listen(2)
 print("Waiting for connection, Server has already started")
-
 
 # Create enemy
 def enemies_create():
@@ -72,7 +72,7 @@ def thread_client(conn, player):
     while connected:
         sounds = ""
         for bullet in bullets_obj:
-            if bullet.y < -60:
+            if bullet.y < 0:
                 bullets_obj.remove(bullet)
 
         for bullet in bullets_obj:
@@ -127,6 +127,7 @@ def thread_client(conn, player):
 
 
 currentPlayer = 0
+
 while True:
     conn, addr = s.accept()
     thread = threading.Thread(target=thread_client, args=(conn, currentPlayer))

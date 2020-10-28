@@ -18,6 +18,7 @@ mixer.music.load("background.wav")
 mixer.music.set_volume(0.1)
 mixer.music.play(-1)
 
+
 def redrawWindow(win, players, enemies, bullets, textsurface):
     win.blit(background, (0, 0))
     win.blit(textsurface, (0, 0))
